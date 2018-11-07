@@ -20,6 +20,7 @@ public class Main {
       });
       
       var ser = new Serializer();      
+      var des = new Deserializer();
       
       var m2 = new FloatMatrix(new Float[][] {
         {-7f, 5f},
@@ -33,11 +34,13 @@ public class Main {
           ser.getStringRepresentation(m1),
           ser.getStringRepresentation(m2),
           ser.getStringRepresentation(m3));
+      
       /*f.writeFileContent("test.txt", new String[] {
           "str1", "str2", "str3", "\r\n", "str4"
-      });
+      });*/
       var s = f.readFileContent("test.txt");
-      for (var st : s)
+      des.getMatrix(s[0]);
+      /*for (var st : s)
         System.out.println(st);
         */
     } 

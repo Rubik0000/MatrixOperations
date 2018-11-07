@@ -14,11 +14,8 @@ import java.util.ArrayList;
 /**
  *
  */
-public class FileOperations {
+public class FileOperations  implements IStrUtils {
   
-  //static private String lineSep = "\r\n";
-  static private String lineSep = System.getProperty("line.separator");
-
   public String[] readFileContent(String fileName) 
       throws IOException {
     
@@ -36,7 +33,7 @@ public class FileOperations {
           }          
         }
         else {
-          strBuff.append(s);
+          strBuff.append(s + LINE_SEP);
         }
       }// while
       if (strBuff.length() != 0) {
@@ -58,7 +55,7 @@ public class FileOperations {
       for (var str : content) {
         buffWriter.write(str);
         //buffWriter.write(lineSep);
-        buffWriter.write(lineSep);                
+        buffWriter.write(LINE_SEP);                
       }
     }
     catch (IOException ex) {
