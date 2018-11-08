@@ -46,4 +46,14 @@ public class FloatMatrix extends Matrix {
     return a.floatValue() * b.floatValue();
   }
 
+  @Override
+  protected Number sub(Number a, Number b) {
+    return a.floatValue() - b.floatValue();
+  }
+
+  @Override
+  protected Number devide(Number a, Number b) {
+    return a.floatValue() / b.floatValue();
+  }
+
 }

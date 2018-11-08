@@ -29,17 +29,19 @@ public class Main {
       });
       var m3 = m1.multiply(m2);
       
-      var f = new FileOperations();
+      m1.reverseMatrix();
+      
+      /*var f = new FileOperations();
       f.writeFileContent("test.txt", 
           ser.getStringRepresentation(m1),
           ser.getStringRepresentation(m2),
-          ser.getStringRepresentation(m3));
+          ser.getStringRepresentation(m3));/*
       
       /*f.writeFileContent("test.txt", new String[] {
           "str1", "str2", "str3", "\r\n", "str4"
       });*/
-      var s = f.readFileContent("test.txt");
-      des.getMatrix(s[0]);
+      //var s = f.readFileContent("test.txt");
+      //des.getMatrix(s[0]);
       /*for (var st : s)
         System.out.println(st);
         */

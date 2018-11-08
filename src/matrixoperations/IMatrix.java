@@ -14,6 +14,8 @@ public interface IMatrix {
    */
   IMatrix multiply(IMatrix matr) throws MultiplyImposibleException;
   
+  IMatrix reverseMatrix();
+  
   int GetRows();
   
   int GetColumns();

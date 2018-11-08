@@ -34,7 +34,12 @@ public abstract class Matrix implements IMatrix {
   
   protected abstract Number sum(Number a, Number b);
   
+  protected abstract Number sub(Number a, Number b);
+  
   protected abstract Number mult(Number a, Number b);
+  
+  protected abstract Number devide(Number a, Number b);
+    
   
   
   @Override
@@ -62,6 +67,61 @@ public abstract class Matrix implements IMatrix {
       return null;
     }    
   }
+  
+  private void changeRows(Number[][] matr, int row1, int row2) {
+    Number tmp = null;
+    for (int i = 0; i < matr[0].length; ++i) {
+      tmp = matr[row1][i];
+      matr[row1][i] = matr[row2][i];
+      matr[row2][i] = tmp;      
+    }
+  }
+  
+  @Override
+  final public IMatrix reverseMatrix() {
+    int m = GetRows();
+    int n = GetColumns() * 2;
+    var enhancedMatr = new Number[m][n];
+    try {
+      for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+          if (j < n /2) {
+            enhancedMatr[i][j] = GetValue(i, j);
+          }
+          else if (i == j - n / 2) {
+            enhancedMatr[i][j] = 1;
+          }
+          else {
+            enhancedMatr[i][j] = 0;
+          }
+        }
+      }
+      
+      for (int i = 0; i < n; ++i) {
+        if (enhancedMatr[i][i].equals(0)) {
+          int row = i + 1;
+          while (enhancedMatr[row++][i].equals(0));
+          changeRows(enhancedMatr, i, row);
+        }
+        for (int j = n - 1; j >= i; --j) {
+          enhancedMatr[i][j] = devide(enhancedMatr[i][j], enhancedMatr[i][i]);  
+        }
+        for (int j = i + 1; j < m; ++j) {
+          var tmp = enhancedMatr[j][i];
+          for (int k = n - 1; k >= i; --k) {
+            enhancedMatr[j][k] = sub(enhancedMatr[j][k], mult(tmp, enhancedMatr[i][k]));
+          }
+          //for (int k = 0; k < i; ++k) {
+          //  enhancedMatr[j][k] = sub(enhancedMatr[j][k], mult(tmp, enhancedMatr[i][k]));
+          //}
+        }
+      }
+      return null;
+    }
+    catch (InvalidIndexException ex) {
+      return null;
+    }    
+  }
 
   @Override
   final public int GetRows() {
@@ -74,7 +134,7 @@ public abstract class Matrix implements IMatrix {
   }
 
   @Override
-  public Number GetValue(int row, int col) throws InvalidIndexException{
+  public Number GetValue(int row, int col) throws InvalidIndexException {
     if (row < 0 || row >= GetRows() || col < 0 || col >= GetColumns()) {
       throw new InvalidIndexException("Invalid indexes");
     }
