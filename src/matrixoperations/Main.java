@@ -1,55 +1,102 @@
-/**
- * 
- */
+
 package matrixoperations;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 /**
- * @author Oleg
  *
  */
 public class Main {
 
+  static private final int INVALID_FORMAT = 1;
+  static private final int MULT_IMPOSSIBLE = 2;
+  static private final int INVERSE_IMPOSSIBLE = 3;
+  static private final int FILE_ERROR = 4;
+  static private final int UNKNOWN = 5;
+  static private final int INVALID_ARGS = 6;
+  
   /**
    * @param args
    */
   public static void main(String[] args) {
+    
+    int code;
+    if (args.length != 2) {
+      System.out.println("Invalid arguments");
+      code = INVALID_ARGS;
+    }
+    else {
+      code =  showMenu(args[0], args[1]);
+    }
+    System.out.println("Exit code: " + code);
+  }
+  
+  static private int showMenu(String sourceFile, String destFile) {
     try {
-      var m1 = new FloatMatrix(new Float[][] {
-        {2f, 5f, 7f},
-        {6f, 3f, 4f},
-        {5f, -2f, -3f}
-      });
-      
+      var scanner = new Scanner(System.in);
+      var files = new FileOperations();
       var ser = new Serializer();      
       var des = new Deserializer();
-      
-      var m2 = new FloatMatrix(new Float[][] {
-        {-7f, 5f},
-        {2f, -1f},
-        {4f, 3f}
-      });
-      //var m3 = m1.multiply(m2);
-      
-      //m1.reverseMatrix();
-      
-      var f = new FileOperations();
-      f.writeFileContent("test.txt", 
-          ser.getStringRepresentation(m1.reverseMatrix()));
-      
-      /*f.writeFileContent("test.txt", new String[] {
-          "str1", "str2", "str3", "\r\n", "str4"
-      });*/
-      //var s = f.readFileContent("test.txt");
-      //des.getMatrix(s[0]);
-      /*for (var st : s)
-        System.out.println(st);
-        */
-    } 
-    catch (Exception e) {
-      
-      e.printStackTrace();
+      int ans = 0;
+      for (;;) {
+        do {
+          System.out.println("Choose operation:");
+          System.out.println("1 - multiplying");
+          System.out.println("2 - inverting");
+          System.out.println("0 - exit");
+          System.out.print(">> ");
+          if (!scanner.hasNextInt()) {
+            scanner.nextLine();
+            continue;
+          }
+          ans = scanner.nextInt();
+        } while ((ans < 0) || (ans > 2));
+        
+        switch (ans) {
+          case 0:
+            return 0;
+            
+          case 1:
+            var srtMatrs = files.readFileContent(sourceFile);
+            var matr1 = des.getMatrix(srtMatrs[0]);
+            var matr2 = des.getMatrix(srtMatrs[1]);
+            var matrMult = matr1.multiply(matr2);
+            var strMatrMult = ser.getStringRepresentation(matrMult);
+            files.writeFileContent(destFile, strMatrMult);
+            return 0;
+            
+          case 2:
+            var matrs = files.readFileContent(sourceFile);
+            var m = des.getMatrix(matrs[0]);
+            var inverted = m.invertMatrix();
+            var strInverted = ser.getStringRepresentation(inverted);
+            files.writeFileContent(destFile, strInverted);
+            return 0;
+        }
+      }      
     }
-    
+    catch (InvalidFormatException ex) {
+      System.out.println(ex.getMessage());
+      return INVALID_FORMAT;
+    }
+    catch (MultiplyImposibleException ex) {
+      System.out.println(ex.getMessage());
+      return MULT_IMPOSSIBLE;
+    }
+    catch (InvertingImpossibleException ex) {
+      System.out.println(ex.getMessage());
+      return INVERSE_IMPOSSIBLE;
+    }
+    catch (IOException ex) {
+      System.out.println(ex.getMessage());
+      return FILE_ERROR;
+    }
+    catch (Exception ex) {
+      System.out.println(ex.getMessage());
+      return UNKNOWN;
+    }
+    //return 0;
   }
 
 }

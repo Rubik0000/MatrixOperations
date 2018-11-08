@@ -3,7 +3,7 @@ package matrixoperations;
 
 
 /**
- *
+ * An abstract matrix with "Number" type of elements
  */
 public abstract class Matrix implements IMatrix {
 
@@ -16,6 +16,12 @@ public abstract class Matrix implements IMatrix {
   /**The values of the matrix*/
   private Number[][] _matrix; 
   
+  /**
+   * Constructor creates a new matrix from a given 2D array
+   * 
+   * @param arr
+   * @throws InvalidSizeException if the array is not simetric
+   */
   protected Matrix(Number[][] arr) throws InvalidSizeException {
     int cols = arr[0].length;
     for (int i = 1; i < arr.length; ++i) {
@@ -29,35 +35,91 @@ public abstract class Matrix implements IMatrix {
     _matrix = arr;
   }
   
+  /**
+   * Creates a 2D array from a given matrix and
+   * enhances it with a identity matrix 
+   * 
+   * @param matr
+   * @return
+   * @throws InvalidIndexException
+   */
+  static private Number[][] getEnhancedMatixInternals(IMatrix matr) 
+      throws InvalidIndexException {
+    
+    int m = matr.getRows();
+    int n = matr.getColumns() * 2;
+    var enhancedMatr = new Number[m][n];
+    for (int i = 0; i < m; ++i) {
+      for (int j = 0; j < n; ++j) {
+        if (j < n /2) {
+          enhancedMatr[i][j] = matr.getValue(i, j);
+        }
+        else if (i == j - n / 2) {
+          enhancedMatr[i][j] = 1;
+        }
+        else {
+          enhancedMatr[i][j] = 0;
+        }
+      }
+    }
+    return enhancedMatr;
+  }
+  
+  
+  /**
+   * Changes two rows in a given array
+   * 
+   * @param matr where it needs to change 
+   * @param row1 the number of the first row
+   * @param row2 the number of the second row
+   */
+  static private void changeRows(Number[][] matr, int row1, int row2) {
+    Number tmp = null;
+    for (int i = 0; i < matr[0].length; ++i) {
+      tmp = matr[row1][i];
+      matr[row1][i] = matr[row2][i];
+      matr[row2][i] = tmp;      
+    }
+  }
+  
+  /**
+   * Creates a new instance of a class with the same type
+   * as invoked object
+   * 
+   * @param arr constructor arguments
+   * @return new instance
+   * @throws InvalidSizeException
+   */
   protected abstract IMatrix getInstance(Number[][] arr)
       throws InvalidSizeException;
   
+  // Overloaded arithmetic operations for different types
+    
   protected abstract Number sum(Number a, Number b);
-  
+    
   protected abstract Number sub(Number a, Number b);
   
   protected abstract Number mult(Number a, Number b);
   
   protected abstract Number devide(Number a, Number b);
-    
-  
+      
   
   @Override
   final public IMatrix multiply(IMatrix matr) 
       throws MultiplyImposibleException {
     
-    if (this.GetColumns() != matr.GetRows()) {
+    if (this.getColumns() != matr.getRows()) {
       throw new MultiplyImposibleException("The number of columns"
           + "in the left matrix does not equal to the number of rows in the right one");
     }    
-    var newMatr = new Number[this.GetRows()][matr.GetColumns()];        
+    var newMatr = new Number[this.getRows()][matr.getColumns()];        
     try {
-      for (int i = 0; i < this.GetRows(); ++i) {
-        for (int j = 0; j < matr.GetColumns(); ++j) {          
+      for (int i = 0; i < this.getRows(); ++i) {
+        for (int j = 0; j < matr.getColumns(); ++j) {          
           newMatr[i][j] = 0;
-          for (int k = 0; k < this.GetColumns(); ++k) {
-            newMatr[i][j] = sum(newMatr[i][j], mult(this.GetValue(i, k),
-                matr.GetValue(k, j)));
+          for (int k = 0; k < this.getColumns(); ++k) {
+            newMatr[i][j] = sum(newMatr[i][j], mult(this.getValue(i, k),
+                matr.getValue(k, j)));
           }
         }
       }
@@ -67,35 +129,18 @@ public abstract class Matrix implements IMatrix {
       return null;
     }    
   }
-  
-  private void changeRows(Number[][] matr, int row1, int row2) {
-    Number tmp = null;
-    for (int i = 0; i < matr[0].length; ++i) {
-      tmp = matr[row1][i];
-      matr[row1][i] = matr[row2][i];
-      matr[row2][i] = tmp;      
-    }
-  }
-  
+      
+   
   @Override
-  final public IMatrix reverseMatrix() {
-    int m = GetRows();
-    int n = GetColumns() * 2;
-    var enhancedMatr = new Number[m][n];
+  final public IMatrix invertMatrix() 
+      throws InvertingImpossibleException, MatrixException {       
+    if (getRows() != getColumns()) {
+      throw new InvertingImpossibleException("Matrix is not square");
+    }
     try {
-      for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-          if (j < n /2) {
-            enhancedMatr[i][j] = GetValue(i, j);
-          }
-          else if (i == j - n / 2) {
-            enhancedMatr[i][j] = 1;
-          }
-          else {
-            enhancedMatr[i][j] = 0;
-          }
-        }
-      }
+      var enhancedMatr = getEnhancedMatixInternals(this);
+      int m = enhancedMatr.length;
+      int n = enhancedMatr[0].length;
       
       for (int i = 0; i < m; ++i) {
         if (enhancedMatr[i][i].equals(0)) {
@@ -113,10 +158,7 @@ public abstract class Matrix implements IMatrix {
           var tmp = enhancedMatr[j][i];
           for (int k = n - 1; k >= i; --k) {
             enhancedMatr[j][k] = sub(enhancedMatr[j][k], mult(tmp, enhancedMatr[i][k]));
-          }
-          //for (int k = 0; k < i; ++k) {
-          //  enhancedMatr[j][k] = sub(enhancedMatr[j][k], mult(tmp, enhancedMatr[i][k]));
-          //}
+          }          
         }
       }
       var revMatr = new Number[m][n / 2];
@@ -128,26 +170,26 @@ public abstract class Matrix implements IMatrix {
       return this.getInstance(revMatr);
     }
     catch (InvalidIndexException ex) {
-      return null;
+      throw new MatrixException("Something goes wrong with internal array");
     } 
     catch (InvalidSizeException e) {
-      return null;
+      throw new MatrixException("Something goes wrong with matrix initialization");
     }    
   }
 
   @Override
-  final public int GetRows() {
+  final public int getRows() {
     return _rows;
   }
 
   @Override
-  final public int GetColumns() {
+  final public int getColumns() {
     return _cols;
   }
 
   @Override
-  public Number GetValue(int row, int col) throws InvalidIndexException {
-    if (row < 0 || row >= GetRows() || col < 0 || col >= GetColumns()) {
+  public Number getValue(int row, int col) throws InvalidIndexException {
+    if (row < 0 || row >= getRows() || col < 0 || col >= getColumns()) {
       throw new InvalidIndexException("Invalid indexes");
     }
     return _matrix[row][col];

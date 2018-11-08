@@ -18,8 +18,8 @@ public class FloatMatrix extends Matrix {
    * @see matrixoperations.IMatrix#GetValue(int, int)
    */
   @Override
-  public Float GetValue(int row, int col) throws InvalidIndexException {    
-    return super.GetValue(row, col).floatValue();
+  public Float getValue(int row, int col) throws InvalidIndexException {    
+    return super.getValue(row, col).floatValue();
   }
 
   /* (non-Javadoc)
