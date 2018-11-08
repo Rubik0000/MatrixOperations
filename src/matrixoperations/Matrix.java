@@ -97,7 +97,7 @@ public abstract class Matrix implements IMatrix {
         }
       }
       
-      for (int i = 0; i < n; ++i) {
+      for (int i = 0; i < m; ++i) {
         if (enhancedMatr[i][i].equals(0)) {
           int row = i + 1;
           while (enhancedMatr[row++][i].equals(0));
@@ -106,7 +106,10 @@ public abstract class Matrix implements IMatrix {
         for (int j = n - 1; j >= i; --j) {
           enhancedMatr[i][j] = devide(enhancedMatr[i][j], enhancedMatr[i][i]);  
         }
-        for (int j = i + 1; j < m; ++j) {
+        for (int j = 0; j < m; ++j) {
+          if (j == i) {
+            continue;
+          }
           var tmp = enhancedMatr[j][i];
           for (int k = n - 1; k >= i; --k) {
             enhancedMatr[j][k] = sub(enhancedMatr[j][k], mult(tmp, enhancedMatr[i][k]));
@@ -116,9 +119,18 @@ public abstract class Matrix implements IMatrix {
           //}
         }
       }
-      return null;
+      var revMatr = new Number[m][n / 2];
+      for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n / 2; ++j) {
+          revMatr[i][j] = enhancedMatr[i][j + n / 2];
+        }
+      }      
+      return this.getInstance(revMatr);
     }
     catch (InvalidIndexException ex) {
+      return null;
+    } 
+    catch (InvalidSizeException e) {
       return null;
     }    
   }

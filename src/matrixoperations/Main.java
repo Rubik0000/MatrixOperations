@@ -15,8 +15,9 @@ public class Main {
   public static void main(String[] args) {
     try {
       var m1 = new FloatMatrix(new Float[][] {
-        {2f, -3f, 1f},
-        {5f, 4f, -2f}
+        {2f, 5f, 7f},
+        {6f, 3f, 4f},
+        {5f, -2f, -3f}
       });
       
       var ser = new Serializer();      
@@ -27,15 +28,13 @@ public class Main {
         {2f, -1f},
         {4f, 3f}
       });
-      var m3 = m1.multiply(m2);
+      //var m3 = m1.multiply(m2);
       
-      m1.reverseMatrix();
+      //m1.reverseMatrix();
       
-      /*var f = new FileOperations();
+      var f = new FileOperations();
       f.writeFileContent("test.txt", 
-          ser.getStringRepresentation(m1),
-          ser.getStringRepresentation(m2),
-          ser.getStringRepresentation(m3));/*
+          ser.getStringRepresentation(m1.reverseMatrix()));
       
       /*f.writeFileContent("test.txt", new String[] {
           "str1", "str2", "str3", "\r\n", "str4"
